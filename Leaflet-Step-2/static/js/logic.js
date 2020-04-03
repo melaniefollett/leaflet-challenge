@@ -5,17 +5,17 @@ let queryUrlEarthquakes = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/sum
 // Perform a GET request to the query URL
 d3.json(queryUrlEarthquakes, function(data) {
   // Debug statement to check that data was pulled correctly
-  console.log(data.features);
+  //console.log(data.features);
   
   // Create new GeoJSON layer and add to map using feature array
   createFeatures(data.features);
-  
 });
 
 // MAP
 // Function to create map features (i.e. markers)
 function createFeatures(earthquakeData) {
-  console.log("Earthquake Data", earthquakeData);
+  //Debug statement to ensure earthquake data was pulled correctly
+  //console.log("Earthquake Data", earthquakeData);
 
   // Define onEachFeature handler that holds popup info
   function onEachFeature(feature, layer) {
@@ -46,7 +46,7 @@ function createFeatures(earthquakeData) {
 
    // Function to link circle size to magnitude value of earthquake
    function circleSize(magnitude) {
-    return magnitude * 10000;
+    return magnitude * 20000;
   };
 
   // Set up circle markers
@@ -54,7 +54,8 @@ function createFeatures(earthquakeData) {
     pointToLayer: function(earthquakeData, latlng) {
       return L.circle(latlng, {
         radius: circleSize(earthquakeData.properties.mag),
-        color: circleColor(earthquakeData.properties.mag),
+        color: "black",
+        weight: 1,
         fillColor: circleColor(earthquakeData.properties.mag),
         fillOpacity: 0.8
       });
@@ -102,10 +103,10 @@ function createMap(earthquakes) {
   let faultlines = new L.LayerGroup();
 
   // Query to retrieve faultline data
-  let queryUrlFaultlines = "https://github.com/fraxen/tectonicplates/blob/master/GeoJSON/PB2002_plates.json";
+  let queryUrlfaultlines = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json";
   
   // Create the lines and add them to the faultlines layer
-  d3.json(queryUrlFaultlines, function(data) {
+  d3.json(queryUrlfaultlines, function(data) {
       L.geoJSON(data, {
         style: function() {
           return {color: "orange", fillOpacity: 0}
@@ -122,7 +123,7 @@ function createMap(earthquakes) {
   // Create map, giving it the layers to display
   let myMap = L.map("map", {
     center: [37.09, -95.71],
-    zoom: 5,
+    zoom: 4,
     layers: [lightmap, outdoormap, satellitemap, earthquakes, faultlines]
   });
 

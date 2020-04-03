@@ -5,17 +5,17 @@ let queryUrlEarthquakes = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/sum
 // Perform a GET request to the query URL
 d3.json(queryUrlEarthquakes, function(data) {
   // Debug statement to check that data was pulled correctly
-  console.log(data.features);
+  //console.log(data.features);
   
   // Create new GeoJSON layer and add to map using feature array
   createFeatures(data.features);
-  
 });
 
 // MAP
 // Function to create map features (i.e. markers)
 function createFeatures(earthquakeData) {
-  console.log("Earthquake Data", earthquakeData);
+  //Debug statement to ensure earthquake data was pulled correctly
+  //console.log("Earthquake Data", earthquakeData);
 
   // Define onEachFeature handler that holds popup info
   function onEachFeature(feature, layer) {
@@ -46,7 +46,7 @@ function createFeatures(earthquakeData) {
 
    // Function to link circle size to magnitude value of earthquake
    function circleSize(magnitude) {
-    return magnitude * 10000;
+    return magnitude * 20000;
   };
 
   // Set up circle markers
@@ -54,7 +54,8 @@ function createFeatures(earthquakeData) {
     pointToLayer: function(earthquakeData, latlng) {
       return L.circle(latlng, {
         radius: circleSize(earthquakeData.properties.mag),
-        color: circleColor(earthquakeData.properties.mag),
+        color: "black",
+        weight: 1,
         fillColor: circleColor(earthquakeData.properties.mag),
         fillOpacity: 0.8
       });
@@ -79,7 +80,7 @@ function createMap(earthquakes) {
 
   // Create base map layer (set up in anticipation of Part 2)
   let baseMaps = {
-    "Default Map": lightmap,
+    "Light Map": lightmap,
   };
 
   // Create overlay map layer (set up in anticipation of Part 2)
