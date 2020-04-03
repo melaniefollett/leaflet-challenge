@@ -78,12 +78,12 @@ function createMap(earthquakes) {
     accessToken: API_KEY
   });
 
-  // Create base map layer (set up in anticipation of Part 2)
+  // Create base map layer (set up in preperation for Part 2)
   let baseMaps = {
     "Light Map": lightmap,
   };
 
-  // Create overlay map layer (set up in anticipation of Part 2)
+  // Create overlay map layer (set up in preperation for Part 2)
   let overlayMaps = {
     Earthquakes: earthquakes,
   };

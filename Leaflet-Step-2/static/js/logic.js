@@ -105,7 +105,7 @@ function createMap(earthquakes) {
   // Query to retrieve faultline data
   let queryUrlfaultlines = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json";
   
-  // Create the lines and add them to the faultlines layer
+  // Create lines and add them to the faultlines layer
   d3.json(queryUrlfaultlines, function(data) {
       L.geoJSON(data, {
         style: function() {
