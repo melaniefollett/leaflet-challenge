@@ -1,86 +1,94 @@
-// Store API endpoint as queryUrl
-//Decided to look at all earthquakes measured per day
-let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
+// Query to retrieve earthquake data
+// Decided to look at all earthquakes measured per day
+let queryUrlEarthquakes = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
 
 // Perform a GET request to the query URL
-d3.json(queryUrl, function(data) {
-  //Create new GeoJSON layer and add to map using feature array
+d3.json(queryUrlEarthquakes, function(data) {
+  // Debug statement to check that data was pulled correctly
+  console.log(data.features);
+  
+  // Create new GeoJSON layer and add to map using feature array
   createFeatures(data.features);
-  console.log(data.features)
+  
 });
 
+// MAP
+// Function to create map features (i.e. markers)
 function createFeatures(earthquakeData) {
   console.log("Earthquake Data", earthquakeData);
 
-  //Define onEachFeature handler
+  // Define onEachFeature handler that holds popup info
   function onEachFeature(feature, layer) {
     layer.bindPopup(`<h3>Location: ${feature.properties.place}</h3><hr /><p>Time: ${feature.properties.time}<br />Magnitude: ${feature.properties.mag}</p>`);
-  }
+  };
 
-  //Function to link radius size to magnitude value of earthquake
-  function radiusSize(magnitude) {
-    return magnitude * 10000;
-  }
-
-  //Function to determine circle marker color based on magnitude value of earthquake
+  // Function to determine circle marker color based on magnitude value of earthquake
   function circleColor(magnitude) {
     if (magnitude < 1) {
-      return "#ccff33"
+      return "#fdd49e"
     }
     else if (magnitude < 2) {
-      return "#ffff33"
+      return "#fdbb84"
     }
     else if (magnitude < 3) {
-      return "#ffcc33"
+      return "#fc8d59"
     }
     else if (magnitude < 4) {
-      return "#ff9933"
+      return "#e34a33"
     }
     else if (magnitude < 5) {
-      return "#ff6633"
+      return "#b30000"
     }
     else {
-      return "#ff3333"
+      return "#fef0d9"
     }
   };
 
-  //Set up circle markers
+   // Function to link circle size to magnitude value of earthquake
+   function circleSize(magnitude) {
+    return magnitude * 10000;
+  };
+
+  // Set up circle markers
   let earthquakes = L.geoJSON(earthquakeData, {
     pointToLayer: function(earthquakeData, latlng) {
       return L.circle(latlng, {
-        radius: radiusSize(earthquakeData.properties.mag),
+        radius: circleSize(earthquakeData.properties.mag),
         color: circleColor(earthquakeData.properties.mag),
-        fillOpacity: 1
+        fillColor: circleColor(earthquakeData.properties.mag),
+        fillOpacity: 0.8
       });
     },
+    // Add popup info to markers
     onEachFeature: onEachFeature
   });
 
-  //Create map using earthquake data
+  // Create layer for earthquake markers
   createMap(earthquakes);
-}
+};
 
+// Function to create map with layers
 function createMap(earthquakes) {
-  //Create map tile layer.  I used this approach so it would be easier to add additional map options for Part 2 of the assignment
-  var lightmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  // Create map tile layer.  I used this approach so it would be easier to add additional map options for Part 2 of the assignment
+  let lightmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
     maxZoom: 18,
     id: "mapbox.light",
     accessToken: API_KEY
   });
 
-  // Define a base map layer (set up in anticipation of Part 2)
-  var baseMaps = {
+  // Create base map layer (set up in anticipation of Part 2)
+  let baseMaps = {
     "Default Map": lightmap,
   };
 
   // Create overlay map layer (set up in anticipation of Part 2)
-  var overlayMaps = {
+  let overlayMaps = {
     Earthquakes: earthquakes,
   };
 
   // Create map, giving it the layers to display
-  var myMap = L.map("map", {
+  let myMap = L.map("map", {
     center: [37.09, -95.71],
     zoom: 5,
     layers: [lightmap, earthquakes]
@@ -91,7 +99,9 @@ function createMap(earthquakes) {
     collapsed: false
   }).addTo(myMap);
 
-  //Add color function for legend
+
+  // LEGEND
+  // Add color function for legend
   function legendColor(magnitude) {
     if (magnitude < 1) {
       return "#ccff33"
@@ -113,7 +123,7 @@ function createMap(earthquakes) {
     }
   };
 
-  //Set up legend
+  // Set up legend
   let legend = L.control({position: 'bottomright'});
   legend.onAdd = function (myMap) {
       let div = L.DomUtil.create('div', 'info legend'),
@@ -129,6 +139,6 @@ function createMap(earthquakes) {
       return div;
   };
   
-  //Add legend to map
+  // Add legend to map
   legend.addTo(myMap);
 };
